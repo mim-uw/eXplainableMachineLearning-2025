@@ -12,8 +12,8 @@ Plan for the winter semester 2024/2025. MIM_UW classes are on Fridays.
 
 * 2024-10-04 -- Introduction
 * 2024-10-11 -- Fairness
-* 2024-10-18 -- Ethics and AI 1/3
-* 2024-10-25 -- LIME and friends
+* 2024-10-18 -- LIME and friends
+* 2024-10-25 -- Ethics and AI 1/3
 * 2024-11-08 -- SHAP and friends
 * 2024-11-15 -- PDP and friends
 * 2024-11-22 -- Ethics and AI 2/3
