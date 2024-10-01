@@ -20,7 +20,7 @@ Plan for the winter semester 2024/2025. MIM_UW classes are on Fridays.
 * 2024-11-29 -- PROJECT: **showcase** (in-person presentations)
 * 2024-12-06 -- VIP and friends	
 * 2024-12-13 -- LRP and friends	
-* 2024-12-20 -- Student presentations	of research papers
+* 2024-12-20 -- Counterfactual explanations and friends
 * 2025-01-10 -- Student presentations	of research papers
 * 2025-01-17 -- Ethics and AI 3/3
 * 2025-01-24 -- PROJECT: **final presentation** (in-person presentations)
