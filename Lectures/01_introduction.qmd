@@ -1,0 +1,540 @@
+---
+title: "Introduction"
+subtitle: "eXplainable AI"
+author: "Przemysław Biecek"
+date: "2024-10-04"
+format:
+  revealjs: 
+    theme: [default]
+    slide-number: true
+    touch: true
+    scrollable: true
+    chalkboard: 
+      buttons: false
+    logo: images/01_XAI.png
+    footer: eXplainable AI -- Introduction -- MIM UW -- 2024/25
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, out.width="70%", fig.width = 8, fig.height = 5.5)
+```
+
+# Design Principles
+
+
+## What is this course for?
+
+![](images/01_break_l.png)
+
+
+## What is this course for?
+
+![](images/01_break.png)
+
+
+
+## About us
+
+:::: {.columns}
+
+::: {.column width="67%"}
+**Przemysław Biecek**
+
+- works at *Faculty of Mathematics, Informatics, and Mechanics* at University of Warsaw and *Faculty of Mathematics and Information Science* at Warsaw University of Technology
+- research interests include Responsible Machine Learning and eXplainable Artificial Intelligence (eXplainable Artificial Intelligence)
+- worked in R&D teams at large and small corporations such as Samsung, IBM, Netezza, Disney, iQuor
+- leads the MI2.AI research team, which carries out XAI related research projects under NCN, NCBiR programmes
+- this is my sixth edition of classes about XAI 
+:::
+
+::: {.column width="33%"}
+![](images/01_przemek.png)
+:::
+
+::::
+
+## About us
+
+:::: {.columns}
+
+::: {.column width="67%"}
+**Hubert Baniecki**
+
+- a 3rd year PhD student in CS/ML at the University of Warsaw, MI2.AI
+- interned at LMU Munich with prof. Bernd Bischl
+- 4+ years of R&D experience in explainable machine learning
+- published 10+ papers on the topic in JMLR, DAMI, ECML, CVPR, WACV...
+
+
+:::
+
+::: {.column width="33%"}
+![](images/01_hbaniecki.png)
+:::
+
+::::
+
+## About us
+
+:::: {.columns}
+
+::: {.column width="67%"}
+**Bartłomiej Sobieski**
+
+- PhD student in CS/AI at the University of Warsaw, Deep Learning Researcher at MI2.AI
+- BSc degree in Mathematics and Data Analysis, MSc degree in Data Science at Warsaw University of Technology
+- XAI + image generative modeling = :heart:
+- I like math
+
+:::
+
+::: {.column width="33%"}
+![](images/01_bsobieski.jpeg)
+:::
+
+::::
+
+## Class participants
+
+
+Let's get to know each other!
+
+<br>
+
+![](images/01_menti.png)
+
+
+
+## How it looked in the past 1/3
+
+Edition 2022/23: [https://github.com/MI2-Education/InterpretableMachineLearning2022](https://github.com/MI2-Education/InterpretableMachineLearning2022)
+
+- Projects related to applications of XAI techniques to the real world problems in collaboration with business partners.
+- 7 lectures + projects + homeworks + presentations
+
+<p><img src="images/01_xai_stories.png" width="80%"/></p>
+
+<!-- ![prev editions](images/xai_stories.png) -->
+
+**Example stories:**
+
+- [https://pbiecek.github.io/xai_stories/story-house-sale-prices.html](https://pbiecek.github.io/xai_stories/story-house-sale-prices.html)
+- [https://pbiecek.github.io/xai_stories_2/story-seasonal-products.html](https://pbiecek.github.io/xai_stories_2/story-seasonal-products.html)
+- [https://pbiecek.github.io/xai_stories_2/story-bert-in-the-recommendation-system.html](https://pbiecek.github.io/xai_stories_2/story-bert-in-the-recommendation-system.html)
+
+**Comments after previous editions:**
+
+- Business applications are cool, but there is a lot of interest in research projects
+- Systematic work, especially in the first half of the semester is good, and avoids piling up issues at the end of the semester
+- Emphasis on commenting on the results, focusing on interpretation is very valuable (although time consuming)
+- It would be great to have more lectures (than 7) in order to discuss techniques specific to certain modalities, such as computer vision and NLP
+
+
+## How it looked in the past 2/3
+
+Edition 2023/24: [https://github.com/MI2-Education/InterpretableMachineLearning2024](https://github.com/MI2-Education/InterpretableMachineLearning2024)
+
+Reports: [https://modeloriented.github.io/CVE-AI/](https://modeloriented.github.io/CVE-AI/)
+
+![](images/01_valid.png)
+
+
+## How it looked in the past 3/3
+
+Edition 2023/24: [https://github.com/MI2-Education/InterpretableMachineLearning2024](https://github.com/MI2-Education/InterpretableMachineLearning2024)
+
+![](images/01_valid_B.png)
+
+
+
+## Key information about this edition
+
+This year Github: [https://github.com/mim-uw/eXplainableMachineLearning-2025/](https://github.com/mim-uw/eXplainableMachineLearning-2025/blob/main/README.md)
+
+The classes are divided into:
+
+- 8+ lecture blocks (with a special guest), where we will discuss various XAI and fairness techniques, but this is only an outline of a very rich and interesting field
+- one block with student presentations, here we will explore some recent XAI techniques 
+- 7 homeworks, they are related to the application of a selected XAI technique on a selected predictive problem
+- a written exam, where there will be tasks similar to those we will discuss during homework
+- we will mainly work on tabular data, although many of presented methods translate to problems in the area of computer vision, NLP, etc.
+
+Lecture/exercises/lab
+
+- Lectures are focused on the theory behind explanations and presentations of projects (shared by both groups) 
+- Exercises are for discussions about homeworks and projects
+
+
+
+## The agenda 
+
+* 2024-10-04 -- Introduction
+* 2024-10-11 -- Fairness
+* 2024-10-18 -- LIME and friends
+* 2024-10-25 -- Ethics and AI 1/3
+* 2024-11-08 -- SHAP and friends
+* 2024-11-15 -- PDP and friends
+* 2024-11-22 -- Ethics and AI 2/3
+* 2024-11-29 -- PROJECT: showcase (in-person presentations)
+* 2024-12-06 -- VIP and friends	
+* 2024-12-13 -- LRP and friends	
+* 2024-12-20 -- Counterfactual explanations and friends
+* 2025-01-10 -- Student presentations	of research papers
+* 2025-01-17 -- Ethics and AI 3/3
+* 2025-01-24 -- PROJECT: final presentation (in-person presentations)
+
+
+## The agenda - RED-XAI
+
+* 2024-10-04 -- Introduction
+* 2024-10-11 -- Fairness
+* 2024-10-18 -- **LIME and friends**
+* 2024-10-25 -- Ethics and AI 1/3
+* 2024-11-08 -- **SHAP and friends**
+* 2024-11-15 -- **PDP and friends**
+* 2024-11-22 -- Ethics and AI 2/3
+* 2024-11-29 -- PROJECT: showcase (in-person presentations)
+* 2024-12-06 -- **VIP and friends**	
+* 2024-12-13 -- **LRP and friends**	
+* 2024-12-20 -- **Counterfactual explanations and friends**
+* 2025-01-10 -- Student presentations	of research papers
+* 2025-01-17 -- Ethics and AI 3/3
+* 2025-01-24 -- PROJECT: final presentation (in-person presentations)
+
+
+## The agenda - BLUE-XAI
+
+* 2024-10-04 -- Introduction
+* 2024-10-11 -- **Fairness**
+* 2024-10-18 -- LIME and friends
+* 2024-10-25 -- **Ethics and AI 1/3**
+* 2024-11-08 -- SHAP and friends
+* 2024-11-15 -- PDP and friends
+* 2024-11-22 -- **Ethics and AI 2/3**
+* 2024-11-29 -- PROJECT: showcase (in-person presentations)
+* 2024-12-06 -- VIP and friends	
+* 2024-12-13 -- LRP and friends	
+* 2024-12-20 -- Counterfactual explanations and friends
+* 2025-01-10 -- Student presentations	of research papers
+* 2025-01-17 -- **Ethics and AI 3/3**
+* 2025-01-24 -- PROJECT: final presentation (in-person presentations)
+
+## The agenda - project
+
+* 2024-10-04 -- Introduction
+* 2024-10-11 -- Fairness
+* 2024-10-18 -- LIME and friends
+* 2024-10-25 -- Ethics and AI 1/3
+* 2024-11-08 -- SHAP and friends
+* 2024-11-15 -- PDP and friends
+* 2024-11-22 -- Ethics and AI 2/3
+* 2024-11-29 -- PROJECT: **showcase** (in-person presentations)
+* 2024-12-06 -- VIP and friends	
+* 2024-12-13 -- LRP and friends	
+* 2024-12-20 -- Counterfactual explanations and friends
+* 2025-01-10 -- Student presentations	of research papers
+* 2025-01-17 -- Ethics and AI 3/3
+* 2025-01-24 -- PROJECT: **final presentation** (in-person presentations)
+
+
+## Teaching materials
+
+:::: {.columns}
+
+::: {.column width="67%"}
+
+This course is based on "Explanatory Model Analysis" [https://ema.drwhy.ai/](https://ema.drwhy.ai/)
+
+**Other sources that extend lectures**
+
+- Fairness and machine learning [https://fairmlbook.org/](https://fairmlbook.org/)
+- An Introduction to Machine Learning Interpretability [https://www.oreilly.com/library/view/an-introduction-to/9781492033158/](https://www.oreilly.com/library/view/an-introduction-to/9781492033158/)
+- Interpretable Machine Learning. A Guide for Making Black Box Models Explainable [https://christophm.github.io/interpretable-ml-book/](https://christophm.github.io/interpretable-ml-book/)
+- The Hitchhiker's Guide to Responsible Machine Learning [https://github.com/BetaAndBit/RML](https://github.com/BetaAndBit/RML)
+:::
+
+::: {.column width="33%"}
+![](images/01_ema.png)
+:::
+
+::::
+
+## Explanatory Model Analysis
+
+<p><img src="images/01_ema_1.png" width="100%"></p>
+
+## Red-teaming, safety and explainability for artificial intelligence systems
+
+<p><img src="images/01_redteam.png" width="100%"></p>
+
+
+## Grades
+
+From different activities, you can get from 0 to 100(*) points. 
+
+51 points are needed to pass this course. 
+
+There are four key components.
+
+* Project (obligatory)
+* Written exam (obligatory)
+* Homeworks (optional)
+* Presentation (optional)
+
+Detailed rules are presented here: [https://github.com/mim-uw/eXplainableMachineLearning-2025/tree/main](https://github.com/mim-uw/eXplainableMachineLearning-2025/tree/main)
+
+
+(*) in fact one can get more, `5!` is waiting
+
+
+```{css, echo=FALSE}
+.reveal {
+  font-size: 24px;
+  line-height: 1.6!important;
+}
+code {
+  font-size: 18px!important;
+  line-height: 1.2!important;
+}
+pre {
+  line-height: 1.2!important;
+}
+```
+
+
+# Model explanations -- Why should you care?
+
+
+## Models, models, more models ...
+
+- For a long time in the media, data, machine learning and artificial intelligence were uncritically glorified
+- The dominant narrative was that almost every problem can be solved having enough data
+- Serious people were making statements like "there is no point in training radiologists, because they will be replaced by AI"
+- As with other bubbles, anything that is (star)AI(star) raised (unhealthy) attention 
+- The media raced to announce what new problem AI had been solved
+
+<p><img src="images/01_XAI_01.png" width="100%"></p>
+
+
+
+## ... however, not every model works ...
+
+There is tremendous potential in AI, **but**:
+
+- there is a growing list of examples in which, despite initial bursts of promise, AI systems did not perform as expected
+- good results on training data did not transfer to real-world data
+- systems performed in outright idiotic ways, even though they seemed to work very well during training
+- more and more people began to cooldown this hurra optimism and collect lists of epic failures of AI
+- at this point we could discuss various examples of spectacular failures of AI for the next two hours
+- see ,,Weapons of Math Destruction: How Big Data Increases Inequality and Threatens Democracy'' by Cathy O'Neil for a very nice overview of these problems (audiobook lasts for over 6 hours)
+
+
+## AI is broken 1/7
+
+<p><img src="images/01_issues_7.png" width="100%"></p>
+
+## AI is broken 2/7
+
+<p><img src="images/01_issues_6.png" width="100%"></p>
+
+## AI is broken 3/7
+
+<p><img src="images/01_issues_5.png" width="100%"></p>
+
+## AI is broken 4/7
+
+<p><img src="images/01_issues_4.png" width="100%"></p>
+
+## AI is broken 5/7
+
+<p><img src="images/01_issues_3.png" width="100%"></p>
+
+## AI is broken 6/7
+
+<p><img src="images/01_issues_1.png" width="100%"></p>
+
+## AI is broken 7/7
+
+<p><img src="images/01_issues_2.png" width="100%"></p>
+
+
+
+## This should not happen
+
+- How do we know what the model has learned? Maybe it bases decisions on some strange artifact?
+- This is not a made up possibility, in the example below the model's decisions correlated strongly with the fact that there were captions in the lower left corner.
+- It turns out that in the learning data there was often a description in the lower left corner next to the horse pictures. Instead of learning to recognize the characteristics of horses, it is much easier to recognize the presence of text in the lower left corner.
+
+Read more: [Unmasking Clever Hans predictors and assessing what machines really learn](https://www.nature.com/articles/s41467-019-08987-4)
+
+<p><center><img src="images/01_CleverHans.png" width="100%"></center></p>
+
+
+
+
+# Model explanations -- How to get there 
+
+## DARPA program for development of XAI methods
+
+- You may know DARPA for developing computer mouse (1964), GPS (1983), Internet -- ARPANet (1969) or drones (1988).
+- In 2017, DARPA launched a major program to fund projects focused on Explainable Artificial Intelligence (XAI) in particular on AI-human collaboration. Research funded by this program is still ongoing and the program itself has contributed to the growing interest in XAI topics.
+- It is worth reading about the assumptions and concepts of this program, many of the ideas are still (after 5 years) valid and attractive research topics.
+
+Read more: [https://www.darpa.mil/](https://www.darpa.mil/program/explainable-artificial-intelligence)
+
+<p><center><img src="images/01_XAI_10.png" width="100%"></center></p>
+
+
+## Responsible and ethical AI - the business response
+
+- Interestingly, this line of research was very quickly get the interest of business.
+- On the websites of many companies dealing with AI-related products and services, you can find bookmarks with the topic of "Trustworthy AI". 
+- On the slide we have a few sites of companies producing software for (Auto)ML, namely H2O, we have consulting companies such as McKinsey, PWC, IBM, as well as product companies such as Samsung and Tensorflow. 
+- Many companies are outdoing themselves in presenting their principals which include slogans such as Transparency, Fairness, Explaianbility. How can these slogans be realized? 
+
+<p><center><img src="images/01_XAI_11.png" width="100%"></center></p>
+
+
+
+## The right to an explanation in Europe
+
+From [Recital 71 EU GDPR](https://www.privacy-regulation.eu/en/recital-71-GDPR.htm)
+
+,,(71) The data subject should have the right not to be subject to a decision, which may include a measure, evaluating personal aspects relating to him or her which is based solely on automated processing and which produces legal effects concerning him or her or similarly significantly affects him or her, such as automatic refusal of an online credit application or e-recruiting practices without any human intervention.
+
+Such processing includes 'profiling' that consists of any form of automated processing of personal data evaluating the personal aspects relating to a natural person, in particular to analyse or predict aspects concerning the data subject's performance at work, economic situation, health, personal preferences or interests, reliability or behaviour, location or movements, where it produces legal effects concerning him or her or similarly significantly affects him or her.
+
+However, decision-making based on such processing, including profiling, should be allowed where expressly authorised by Union or Member State law to which the controller is subject, including for fraud and tax-evasion monitoring and prevention purposes conducted in accordance with the regulations, standards and recommendations of Union institutions or national oversight bodies and to ensure the security and reliability of a service provided by the controller, or necessary for the entering or performance of a contract between the data subject and a controller, or when the data subject has given his or her explicit consent.
+
+**In any case, such processing should be subject to suitable safeguards, which should include specific information to the data subject and the right to obtain human intervention, to express his or her point of view, to obtain an explanation of the decision reached after such assessment and to challenge the decision**.''
+
+
+## The reaction is to try to regulate AI
+
+- For several years, the European Commission has been working on a so-called AI Act to regulate the use of automated algorithms within the European Union.
+- The act is expected to be passed next year -- 2023
+- The act includes specific expectations related to the explainability of decisions supported by automated decision-making systems 
+
+Read more: [https://eur-lex.europa.eu](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A52021PC0206)
+
+<p><img src="images/01_XAI_07.png" width="100%"></p>
+
+
+# Model explanations -- What we will talk about
+
+
+## Two views on XAI 1/4
+
+<p><img src="images/01_breiman.png" width="100%"></p>
+
+## Two views on XAI 2/4
+
+<p><img src="images/01_two_blue.png" width="100%"></p>
+
+## Two views on XAI 3/4
+
+<p><img src="images/01_two_red.png" width="100%"></p>
+
+## Two views on XAI 4/4
+
+<p><img src="images/01_two.png" width="100%"></p>
+
+
+## Model Evaluation Level (MEL) 1/3
+
+<p><img src="images/01_MEL_3.png" width="100%"></p>
+
+## Model Evaluation Level (MEL) 2/3
+
+<p><img src="images/01_MEL_2.png" width="100%"></p>
+
+## Model Evaluation Level (MEL) 3/3
+
+<p><img src="images/01_MEL_1.png" width="100%"></p>
+
+
+## How to think about the explainability of predictive models
+
+
+When we think about the interpretability of models we usually distinguish three classes of methods
+
+- **Interpretable by design,** i.e. methods whose structure allows us to directly analyze how the prediction was formed. For different classes of models, explanations may look different, but they are directly based on model parameters. For linear models they are coefficients, for k-neighbors they are neighbors, for naive Bayes they are marginal distributions
+- **model specific,** i.e. methods whose structure is complex but can be summarized or represented to better understand the relationship between input and output. The two most common classes of models with model-specific explanations are tree model committees (here we can summarize the tree structure) and neural networks (here we can usually summarize the flow of the signal through the network)
+- **model agnostic,** i.e. methods to which this course is devoted, methods that assume nothing about the structure of the model and can be used for models with different structures. Moreover, they can be used to compare models with different structures.
+
+
+Read more: [arxiv.org/2009.13248](https://arxiv.org/pdf/2009.13248.pdf)
+
+
+<p><center><img src="images/01_XAI_12.png" width="100%"></center></p>
+
+
+## There is no one-size-fits-all solution
+
+- We will talk about how to identify the needs of different stakeholders and match them with explanatory techniques
+- It's still area that needs more active research, there's a lot of talk about user needs, but the available methods are more aimed at model developers
+
+Read more: [Transparency, Auditability and eXplainability of Machine Learning Models in Credit Scoring](https://www.tandfonline.com/doi/abs/10.1080/01605682.2021.1922098)
+
+<p><center><img src="images/01_Transparency.png" width="100%"></center></p>
+
+
+
+
+## The pyramid of explainability
+
+- In this class we will discuss several techniques for global and local analysis of the model.
+- Global analysis is concerned with the behavior of the model on the entire data
+- Local analysis deals with the model's behavior on one/some observations
+- The subsequent techniques are complementary, creating an extended, increasingly detailed description of the model's behavior
+
+<p><center><img src="images/01_XAI.png" width="100%"></center></p>
+
+
+## Shift in our focus: Statistics
+
+- Statistical analysis of data most often assumes a great deal of knowledge about the phenomenon. Understanding the data allows to choose appropriate transformations, representations. Verification is oriented toward hypothesis testing, such as by p-values
+
+<p><center><img src="images/01_shift1.png" width="100%"></center></p>
+
+## Shift in our focus: Machine Learning
+
+- Machine learning puts a priority on optimizing the model, especially for performance. There is a lot of searching through the space of possible solutions here to find the best one
+- Knowledge of the phenomenon is no longer so important
+
+<p><center><img src="images/01_shift2.png" width="100%"></center></p>
+
+## Shift in our focus: Human Oriented ML?
+
+- What's next. If model building can be easily and quickly automated, in-depth model verification will become more important
+- This is where models are created seamlessly according to the needs of the user, and the user can focus on decisions supported by the models 
+
+<p><center><img src="images/01_shift3.png" width="100%"></center></p>
+
+
+# Take-home message
+
+**Why interpretability is important?**
+
+- Higher trust -> **higher adoption of ML/AI solutions** that will support decision making process
+- May be **required by auditors, regulators**, law
+- New tool for model exploration -> to **gain new insights** about the data/nature of some phenomenom
+- Gatekeeping role, human can **control and/or block wrong decisions** when knowing key reasons behind these decisions
+- **Debugg/improve data or models**, identify wrong behaviour and help to plan actions to fix it
+- **Deeper diagnostic of models**, validation against some domain knowledge, expectations or other values (like human rights -> fairness)
+
+
+**Goals for this course:**
+
+- Learn XAI techniques (model agnostic)
+- Learn the strengths and weaknesses of these techniques while doing a hands-on projects
+- Learn how to communicate explanations to (domain) experts and lay users
+
+
+# Further reading
+
+- **The Mythos of Model Interpretability** by *Zachary C. Lipton* [https://arxiv.org/abs/1606.03490](https://arxiv.org/abs/1606.03490)
+-  **Wyjaśnialna sztuczna inteligencja: od metod do nowych spostrzeżeń** by *Wojciech Samek* [https://www.youtube.com/watch?v=PyL7u7iAIXs&list=LL&index=1&t=6804s](https://www.youtube.com/watch?v=PyL7u7iAIXs&list=LL&index=1&t=6804s)
+
+![](images/01_wyklad_WS.png)
+
