@@ -46,8 +46,6 @@ Grades:
 
 ## Homeworks (0-24 points)
 
-## Homeworks (24 points)
-
 - [Homework 1 - Fairness](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-10-18** (graded by PBI)
 - [Homework 2 - LIME](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-11-08**  (graded by BSO)
 - [Homework 3 - SHAP](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-11-15** (graded by HBA)
