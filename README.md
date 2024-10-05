@@ -4,7 +4,7 @@
 
 Winter semester 2024/25 [@pbiecek](https://github.com/pbiecek) [@hbaniecki](https://github.com/hbaniecki) [@sobieskibj](https://github.com/sobieskibj)
 
-Previous year: https://github.com/mim-uw/eXplainableMachineLearning-2024
+Previous year: [eXplainableMachineLearning-2024](https://github.com/mim-uw/eXplainableMachineLearning-2024), [eXplainableMachineLearning-2023](https://github.com/mim-uw/eXplainableMachineLearning-2023), [eXplainableMachineLearning-2022](https://github.com/mim-uw/eXplainableMachineLearning-2022)
 
 ## Meetings
 
@@ -29,10 +29,10 @@ Plan for the winter semester 2024/2025. MIM_UW classes are on Fridays.
 
 The final grade is based on activity in four areas:
 
-* mandatory: Project 
-* mandatory: Exam  
-* optional: Homeworks 
-* optional: Presentation 
+* mandatory: Project (0-36)
+* mandatory: Exam (0-30)
+* optional: Homeworks (0-24)
+* optional: Presentation (0-10)
 
 In total you can get from 0 to 100 points. 51 points are needed to pass this course.
 
@@ -46,7 +46,15 @@ Grades:
 
 ## Homeworks (0-24 points)
 
-TODO
+## Homeworks (24 points)
+
+- [Homework 1 - Fairness](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-10-18** (graded by PBI)
+- [Homework 2 - LIME](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-11-08**  (graded by BSO)
+- [Homework 3 - SHAP](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-11-15** (graded by HBA)
+- [Homework 4 - PDP](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-12-12** (graded by PBI)
+- [Homework 5 - VIP](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-12-13** (graded by BSO)
+- [Homework 6 - LRP](https://github.com/mim-uw/eXplainableMachineLearning-2025/)  for 0-4 points. **Deadline: 2024-12-20** (graded by HBA)
+
 
 ## Project (0-35 points)
 
