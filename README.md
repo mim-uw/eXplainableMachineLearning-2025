@@ -10,7 +10,7 @@ Previous year: https://github.com/mim-uw/eXplainableMachineLearning-2024
 
 Plan for the winter semester 2024/2025. MIM_UW classes are on Fridays. 
 
-* 2024-10-04 -- Introduction
+* 2024-10-04 -- Introduction, [Slides](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mim-uw/eXplainableMachineLearning-2025/refs/heads/main/Lectures/01_introduction.html), [Audio](https://youtu.be/EcWxG9qk410), Extra reading: [Lipton 2017](https://arxiv.org/abs/1606.03490)
 * 2024-10-11 -- Fairness
 * 2024-10-18 -- LIME and friends
 * 2024-10-25 -- Ethics and AI 1/3
