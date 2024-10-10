@@ -2,16 +2,17 @@
 
 The purpose of the second homework is to learn about the method of calculating fairness statistics.
 
-Calculate these statistics for a model developed on a data from `https://github.com/ahxt/fair_fairness_benchmark/` (https://arxiv.org/abs/2306.09468).
+Calculate these statistics for a set of models trained on a data from `https://github.com/ahxt/fair_fairness_benchmark/` (https://arxiv.org/abs/2306.09468).
 
 Submit your homework as a pull request to this directory.
 It should be in a form of knitr/notebook script submitted to this GitHub, to directory `Homeworks/HW1/FirstnameLastname`.
 
 ## Deadline 
 
-2023-10-18 EOD
+2024-10-18 EOD
 
 ## Task 1
+
 We have two populations Blue (privileged) and Red (unprivileged), with the Blue population being 9 times larger than the Red population.
 
 Individuals from both populations are requesting to attend XAI training to improve competency in this important area. Number of places is limited. The administrators of the training have decided to give priority to enrolling individuals who may need this training in the future, although unfortunately it is difficult to predict who will benefit.
@@ -35,18 +36,30 @@ Starred task: How can this decision rule be changed to improve its fairness?
 
 ## Task 2
 
-For this homework, train models on one of a dataset from https://github.com/ahxt/fair_fairness_benchmark/:
+For this homework, train few models on a selected dataset from https://github.com/ahxt/fair_fairness_benchmark/:
 
 Prepare a knitr/jupiter notebook with the following points.
-Submit your results on GitHub to the directory `Homeworks/HW6`.
+Submit your results on GitHub to the directory `Homeworks/HW1`.
 
-1. Train a model for the selected dataset.
+1. Train a model for the selected dataset. 
 2. For the selected protected attribute (age, gender, race) calculate the following fairness coefficients: Statistical parity, Equal opportunity, Predictive parity.
-3. Train another model (different hyperparameters, feature transformations etc.) and see how the coefficients Statistical parity, Equal opportunity, Predictive parity behave for it.
-4. Apply the selected bias mitigation technique on the first model. Check how Statistical parity, Equal opportunity, Predictive parity coefficients behave after this correction.
-5. Compare the quality (performance) of the three models with their fairness coefficients. Is there any correlation?
+3. Train another model (different hyperparameters, feature transformations etc., different family of models) and see how the coefficients Statistical parity, Equal opportunity, Predictive parity behave for it. Are they different/similar?
+4. Apply the selected bias mitigation technique (like data balancing) on the first model. Check how Statistical parity, Equal opportunity, Predictive parity coefficients behave after this mittigation.
+5. Compare the quality (performance) of the three models with their fairness coefficients. Is there any correlation/trade off? 
 6. ! COMMENT on the results obtained in (2)-(5)
 
+
+## Alternative task
+
+Alternative homework
+
+If you prefer proving theorems instead of calculations,
+then instead of the above assignments, 
+you can prove that except for trivial situations 
+(independence between a decision with a group), 
+no two of the three fairness equalities 
+(demographic parity, equal opportunity, predictive rate parity) 
+can occur simultaneously.
 
 
 ## **Important note:**
