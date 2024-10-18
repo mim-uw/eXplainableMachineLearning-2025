@@ -1,0 +1,611 @@
+---
+title: "homework 1 "
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE) # This will show code in the Appendix
+```
+I've picked the "German" dataset, which shows outcomes of loan applications from
+over ten thousand clients at a German bank in 1995. Following the FFB paper,
+I have examined Sex (Male or Female) as the sensitive variable.
+```{r, include=FALSE}
+library(caret)
+library(dplyr)
+library(e1071)
+library(forcats)
+library(pROC)
+library(xgboost)
+```
+```{r, include=FALSE}
+df <- read.csv(
+  "german_credit_risk.csv",
+  sep = ",",
+  header = TRUE,
+)
+df$Class <- df$Class - 1
+```
+Example observations from the dataset.
+```{r, echo=FALSE}
+head(df, n=10)
+```
+### Training of models and computation of statistics
+
+Categorical features are encoded using one-hot and label
+encoding techniques, preserving ordinality where applicable. The data is then
+split into training and testing sets. Two XGBoost models are trained: a standard
+tree-based model, `bst_1` or "the first model", and a linear model `bst_2`,
+"the second model". Predictions are generated on the test set and converted
+to binary classifications using a 0.5 threshold.
+
+Initial accuracy scores are calculated for both models to establish a baseline
+performance before evaluating fairness.
+
+```{r, echo=FALSE}
+# Process data for XGBoost
+label_encode <- function(x, levels = NULL) {
+  if (!is.null(levels)) {
+    factor(x, levels = levels, ordered = TRUE)
+  } else {
+    factor(x, levels = unique(x))
+  }
+}
+
+# Save numeric predictors
+numeric_cols <- setdiff(names(df)[sapply(df, is.numeric)], "Class")
+numeric_data <- df[numeric_cols]
+
+# One-hot encode categorical non-ordinal predctors
+dummies <- dummyVars(~ Housing + Purpose + Job, data = df)
+encoded_onehot <- predict(dummies, newdata = df)
+
+# Label encode categorical ordinal predictors
+label_cols <- c("Sex", "Saving.accounts", "Checking.account")
+ordinal_levels <- list(
+  Sex = c("female", "male"),
+  Saving.accounts = c("little", "moderate", "quite rich", "rich"),
+  Checking.account = c("little", "moderate", "rich")
+)
+encoded_label <- data.frame(lapply(
+  label_cols,
+  function(col) {
+    label_encode(df[[col]], ordinal_levels[[col]])
+  }
+))
+names(encoded_label) <- label_cols
+encoded_label_numeric <- data.frame(lapply(encoded_label, as.numeric))
+
+# Combine all predictors into a numeric df
+processed_data_xgb <- cbind(
+  numeric_data,
+  encoded_onehot,
+  encoded_label_numeric
+)
+processed_data_xgb$Class <- df$Class
+
+# Create a train/test split
+set.seed(123)
+trainIndex <- createDataPartition(processed_data_xgb$Class, p = 0.8, list = FALSE)
+train_data_xgb <- processed_data_xgb[trainIndex, ]
+test_data_xgb <- processed_data_xgb[-trainIndex, ]
+train_data_xgb_m <- as.matrix(train_data_xgb[, -which(names(train_data_xgb) == "Class")])
+test_data_xgb_m <- as.matrix(test_data_xgb[, -which(names(test_data_xgb) == "Class")])
+
+
+# First XGBoost model: more conservative
+bst_1 <- xgboost(
+  data = train_data_xgb_m,
+  label = train_data_xgb$Class,
+  nrounds = 150,
+  objective = "binary:logistic",
+  verbose = 0
+)
+
+bst_2 <- xgboost(
+  data = train_data_xgb_m,
+  label = train_data_xgb$Class,
+  booster = "gblinear",
+  nrounds = 150,
+  objective = "binary:logistic",
+  verbose = 0
+)
+
+# Make predictions
+bst_1_pred <- predict(
+  bst_1,
+  as.matrix(test_data_xgb[, -which(names(test_data_xgb) == "Class")])
+)
+bst_2_pred <- predict(
+  bst_2,
+  as.matrix(test_data_xgb[, -which(names(test_data_xgb) == "Class")])
+)
+
+# Convert XGBoost predictions to binary (assuming 0.5 threshold)
+bst_1_pred_binary <- as.numeric(bst_1_pred > 0.5)
+bst_2_pred_binary <- as.numeric(bst_2_pred > 0.5)
+
+# Evaluate models (you'll need to implement fairness metrics)
+bst_1_accuracy <- mean(bst_1_pred_binary == test_data_xgb$Class)
+bst_2_accuracy <- mean(bst_2_pred_binary == test_data_xgb$Class)
+
+cat("Tree-boosting XGB accuracy:", bst_1_accuracy, "\n")
+cat("Linear-boosting XGB accuracy:", bst_2_accuracy)
+```
+We compute the statistics in question for both models.
+
+```{r, echo=FALSE}
+# Function to calculate counts
+calculate_counts <- function(data, pred_vector, sex_value) {
+  subset <- data$Sex == sex_value
+  true_positive <- sum(subset & pred_vector == 1 & data$Class == 1)
+  false_positive <- sum(subset & pred_vector == 1 & data$Class == 0)
+  true_negative <- sum(subset & pred_vector == 0 & data$Class == 0)
+  false_negative <- sum(subset & pred_vector == 0 & data$Class == 1)
+
+  list(
+    TP = true_positive,
+    FP = false_positive,
+    TN = true_negative,
+    FN = false_negative
+  )
+}
+
+# Function to calculate metrics
+calculate_metrics <- function(counts) {
+  total <- sum(unlist(counts))
+  positive_rate <- (counts$TP + counts$FP) / total
+  true_positive_rate <- counts$TP / (counts$TP + counts$FN)
+  positive_predictive_value <- counts$TP / (counts$TP + counts$FP)
+
+  list(
+    positive_rate = positive_rate,
+    true_positive_rate = true_positive_rate,
+    positive_predictive_value = positive_predictive_value
+  )
+}
+
+# Function to calculate fairness metrics
+calculate_fairness_metrics <- function(data, pred_vector) {
+  counts_sex_1 <- calculate_counts(data, pred_vector, 1)
+  counts_sex_2 <- calculate_counts(data, pred_vector, 2)
+
+  metrics_sex_1 <- calculate_metrics(counts_sex_1)
+  metrics_sex_2 <- calculate_metrics(counts_sex_2)
+
+  demographic_parity <- metrics_sex_1$positive_rate / metrics_sex_2$positive_rate
+  equality_of_opportunity <- metrics_sex_1$true_positive_rate / metrics_sex_2$true_positive_rate
+  predictive_rate_parity <- metrics_sex_1$positive_predictive_value / metrics_sex_2$positive_predictive_value
+
+  list(
+    demographic_parity = demographic_parity,
+    equality_of_opportunity = equality_of_opportunity,
+    predictive_rate_parity = predictive_rate_parity,
+    counts_sex_1 = counts_sex_1,
+    counts_sex_2 = counts_sex_2
+  )
+}
+
+# Calculate metrics for both models
+metrics_bst_1 <- calculate_fairness_metrics(test_data_xgb, bst_1_pred_binary)
+metrics_bst_2 <- calculate_fairness_metrics(test_data_xgb, bst_2_pred_binary)
+
+# Function to print results
+print_results <- function(metrics, model_name) {
+  cat("\nFairness Metrics for", model_name, ":\n")
+  cat("Demographic Parity:", 1/metrics$demographic_parity, "\n")
+  cat("Equality of Opportunity:", metrics$equality_of_opportunity, "\n")
+  cat("Predictive Rate Parity:", metrics$predictive_rate_parity, "\n")
+  cat("\nCounts for Sex 1 (TP, FP, TN, FN):",
+      metrics$counts_sex_1$TP, metrics$counts_sex_1$FP,
+      metrics$counts_sex_1$TN, metrics$counts_sex_1$FN, "\n")
+  cat("Counts for Sex 2 (TP, FP, TN, FN):",
+      metrics$counts_sex_2$TP, metrics$counts_sex_2$FP,
+      metrics$counts_sex_2$TN, metrics$counts_sex_2$FN, "\n")
+}
+
+# Print results for both models
+print_results(metrics_bst_1, "Tree-boosting XGB (bst_1)")
+print_results(metrics_bst_2, "Linear-boosting XGB (bst_2)")
+```
+Both models are biased against men in terms of equality of opportunity and
+predictive rate parity, but biased in favor of men in terms of demographic
+parity. Men are more likely to receive positive predictions from the model
+compared to women, regardless of the true outcomes. However, when the model
+predicts a positive outcome, it is less likely to be correct for men tha
+for women (predictive rate parity biased against men), and among those who
+have positive outcomes, the model is less likely to correctly identify men
+compared to women (equality of opportunity biased against men).
+
+The direction of each bias is the same in both models, but the magnitude
+is about twice as much in the linear-boosting model than in the tree-boosting
+model. This suggests that the bias is inherent in the dataset (since the models
+seem to agree), but might actually be mitigated by capturing more complex and
+nonlinear relationships between predictors.
+
+### Mitigation
+
+A natural and simple way to mitigate the issue would then be to change probability
+thresholds per gender, prompting the model to be "more negative" about otherwise
+ambiguous female clients and "more positive" about otherwise ambiguous male
+clients. A brief search shows that setting $p = 0.6$ for women and $p = 0.4$
+for men mitigates demographic bias and equal opportunity bias, at the cost
+of increasing predictive rate bias in favor of men:
+
+```{r, echo=FALSE}
+threshold_female <- 0.6
+threshold_male <- 0.4
+cat("Threshold for men:", threshold_male, "\n")
+cat("Threshold for women:", threshold_female, "\n")
+
+# Apply gender-specific thresholds
+bst_1_pred_binary_adjusted <- ifelse(
+  test_data_xgb$Sex == 1,
+  as.numeric(bst_1_pred > threshold_female),
+  as.numeric(bst_1_pred > threshold_male)
+)
+
+metrics_bst_1_fairness_adjusted <- calculate_fairness_metrics(
+  test_data_xgb,
+  bst_1_pred_binary_adjusted
+)
+print_results(
+  metrics_bst_1_fairness_adjusted,
+  "Tree-boosting XGB (fairness adjusted)"
+)
+```
+### Quality comparison and comments
+
+It is not hard to calculate from the data above that the accuracy of our final
+mitigation-employing model is 72%, a decrease of 2.5 percentage points over
+the original model. We have also gained additional three false positives. For
+that price, we have bought a near-complete demographic parity, and negligibly
+small equality of opportunity bias (still in favor of women). However,
+predictive rate bias in favor of women increased by about 15%.
+
+The analysis below explains why this strategy worked. Let us compute and show
+the ROC curve for the first model.
+
+```{r, echo=FALSE}
+# Function to ensure monotonicity
+ensure_monotonic <- function(x, y) {
+  order <- order(x, y)
+  x <- x[order]
+  y <- y[order]
+
+  monotonic_y <- cummax(y)
+
+  return(list(x = x, y = monotonic_y))
+}
+
+# Create ROC objects for each gender
+roc_female <- roc(test_data_xgb$Class[test_data_xgb$Sex == 1],
+                  bst_1_pred[test_data_xgb$Sex == 1])
+roc_male <- roc(test_data_xgb$Class[test_data_xgb$Sex == 2],
+                bst_1_pred[test_data_xgb$Sex == 2])
+
+# Ensure monotonicity
+female_mono <- ensure_monotonic(1 - roc_female$specificities, roc_female$sensitivities)
+male_mono <- ensure_monotonic(1 - roc_male$specificities, roc_male$sensitivities)
+
+# Create separate data frames for each gender
+roc_data_female <- data.frame(
+  fpr = female_mono$x,
+  tpr = female_mono$y,
+  gender = "Female"
+)
+
+roc_data_male <- data.frame(
+  fpr = male_mono$x,
+  tpr = male_mono$y,
+  gender = "Male"
+)
+
+# Combine the data frames
+roc_data <- rbind(roc_data_female, roc_data_male)
+
+# Create the plot
+roc_plot <- ggplot(roc_data, aes(x = fpr, y = tpr, color = gender)) +
+  geom_line(linewidth = 1) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "gray") +
+  scale_color_manual(values = c("Female" = "red", "Male" = "blue")) +
+  labs(
+    x = "False Positive Rate",
+    y = "True Positive Rate",
+    title = "ROC Curves by Gender for bst_1 Model",
+    color = "Gender"
+  ) +
+  theme_minimal() +
+  coord_equal()
+
+# Print the plot
+print(roc_plot)
+```
+```{r, echo=FALSE}
+cat("AUC for Female:", auc(roc_female), "\n")
+cat("AUC for Male:", auc(roc_male), "\n")
+```
+The issue should now be relatively clear. The cases that are resolved by the
+model with high probability are generally resolved in the same manner for both
+genders, as exhibited by approximately the same behavior of the ROC curve for
+these cases. It is in the middle where we see the most difference between men
+and women -- otherwise ambiguous cases are typically resolved positively for
+women, and negatively for men.
+
+### Appendix
+
+```{r, eval=FALSE}
+library(caret)
+library(dplyr)
+library(e1071)
+library(forcats)
+library(pROC)
+library(xgboost)
+
+# Read data.
+df <- read.csv(
+  "Homeworks/HW1/german_credit_risk.csv",
+    sep = ",",
+    header = TRUE,
+)
+df$Class <- df$Class - 1
+
+# Process data for XGBoost.
+label_encode <- function(x, levels = NULL) {
+  if (!is.null(levels)) {
+    factor(x, levels = levels, ordered = TRUE)
+  } else {
+    factor(x, levels = unique(x))
+  }
+}
+
+# Save numeric predictors.
+numeric_cols <- setdiff(names(df)[sapply(df, is.numeric)], "Class")
+numeric_data <- df[numeric_cols]
+
+# One-hot encode categorical non-ordinal predctors.
+dummies <- dummyVars(~ Housing + Purpose + Job, data = df)
+encoded_onehot <- predict(dummies, newdata = df)
+
+# Label encode categorical ordinal predictors.
+label_cols <- c("Sex", "Saving.accounts", "Checking.account")
+ordinal_levels <- list(
+  Sex = c("female", "male"),
+  Saving.accounts = c("little", "moderate", "quite rich", "rich"),
+  Checking.account = c("little", "moderate", "rich")
+)
+encoded_label <- data.frame(lapply(
+  label_cols,
+  function(col) {
+    label_encode(df[[col]], ordinal_levels[[col]])
+  }
+))
+names(encoded_label) <- label_cols
+encoded_label_numeric <- data.frame(lapply(encoded_label, as.numeric))
+
+processed_data_xgb <- cbind(
+  numeric_data,
+  encoded_onehot,
+  encoded_label_numeric
+)
+processed_data_xgb$Class <- df$Class
+
+# Create a train/test split.
+set.seed(123)
+trainIndex <- createDataPartition(processed_data_xgb$Class, p = 0.8, list = FALSE)
+train_data_xgb <- processed_data_xgb[trainIndex, ]
+test_data_xgb <- processed_data_xgb[-trainIndex, ]
+train_data_xgb_m <- as.matrix(train_data_xgb[, -which(names(train_data_xgb) == "Class")])
+test_data_xgb_m <- as.matrix(test_data_xgb[, -which(names(test_data_xgb) == "Class")])
+
+
+# First XGBoost model: more conservative.
+bst_1 <- xgboost(
+  data = train_data_xgb_m,
+  label = train_data_xgb$Class,
+  nrounds = 150,
+  objective = "binary:logistic",
+  verbose = 0
+)
+
+bst_2 <- xgboost(
+  data = train_data_xgb_m,
+  label = train_data_xgb$Class,
+  booster = "gblinear",
+  nrounds = 150,
+  objective = "binary:logistic",
+  verbose = 0
+)
+
+# Make predictions.
+bst_1_pred <- predict(
+  bst_1,
+  as.matrix(test_data_xgb[, -which(names(test_data_xgb) == "Class")])
+)
+bst_2_pred <- predict(
+  bst_2,
+  as.matrix(test_data_xgb[, -which(names(test_data_xgb) == "Class")])
+)
+
+# Convert XGBoost predictions to binary.
+bst_1_pred_binary <- as.numeric(bst_1_pred > 0.5)
+bst_2_pred_binary <- as.numeric(bst_2_pred > 0.5)
+
+# Evaluate models.
+bst_1_accuracy <- mean(bst_1_pred_binary == test_data_xgb$Class)
+bst_2_accuracy <- mean(bst_2_pred_binary == test_data_xgb$Class)
+
+cat("Tree-boosting XGB accuracy:", bst_1_accuracy, "\n")
+cat("Linear-boosting XGB accuracy:", bst_2_accuracy)
+
+# Function to calculate counts.
+calculate_counts <- function(data, pred_vector, sex_value) {
+  subset <- data$Sex == sex_value
+  true_positive <- sum(subset & pred_vector == 1 & data$Class == 1)
+  false_positive <- sum(subset & pred_vector == 1 & data$Class == 0)
+  true_negative <- sum(subset & pred_vector == 0 & data$Class == 0)
+  false_negative <- sum(subset & pred_vector == 0 & data$Class == 1)
+
+  list(
+    TP = true_positive,
+    FP = false_positive,
+    TN = true_negative,
+    FN = false_negative
+  )
+}
+
+# Function to calculate metrics.
+calculate_metrics <- function(counts) {
+  total <- sum(unlist(counts))
+  positive_rate <- (counts$TP + counts$FP) / total
+  true_positive_rate <- counts$TP / (counts$TP + counts$FN)
+  positive_predictive_value <- counts$TP / (counts$TP + counts$FP)
+
+  list(
+    positive_rate = positive_rate,
+    true_positive_rate = true_positive_rate,
+    positive_predictive_value = positive_predictive_value
+  )
+}
+
+# Function to calculate fairness metrics.
+calculate_fairness_metrics <- function(data, pred_vector) {
+  counts_sex_1 <- calculate_counts(data, pred_vector, 1)
+  counts_sex_2 <- calculate_counts(data, pred_vector, 2)
+
+  metrics_sex_1 <- calculate_metrics(counts_sex_1)
+  metrics_sex_2 <- calculate_metrics(counts_sex_2)
+
+  demographic_parity <- metrics_sex_1$positive_rate / metrics_sex_2$positive_rate
+  equality_of_opportunity <- metrics_sex_1$true_positive_rate / metrics_sex_2$true_positive_rate
+  predictive_rate_parity <- metrics_sex_1$positive_predictive_value / metrics_sex_2$positive_predictive_value
+
+  list(
+    demographic_parity = demographic_parity,
+    equality_of_opportunity = equality_of_opportunity,
+    predictive_rate_parity = predictive_rate_parity,
+    counts_sex_1 = counts_sex_1,
+    counts_sex_2 = counts_sex_2
+  )
+}
+
+# Calculate metrics for both models.
+metrics_bst_1 <- calculate_fairness_metrics(test_data_xgb, bst_1_pred_binary)
+metrics_bst_2 <- calculate_fairness_metrics(test_data_xgb, bst_2_pred_binary)
+
+# Function to print results.
+print_results <- function(metrics, model_name) {
+  cat(
+    "\nFairness Metrics for",
+    model_name,
+    ":\n"
+  )
+  cat(
+    "Demographic Parity:",
+    1/metrics$demographic_parity,
+    "\n"
+  )
+  cat(
+    "Equality of Opportunity:",
+    metrics$equality_of_opportunity,
+    "\n"
+  )
+  cat(
+    "Predictive Rate Parity:",
+    metrics$predictive_rate_parity,
+    "\n"
+  )
+  cat(
+    "\nCounts for Sex 1 (TP, FP, TN, FN):",
+    metrics$counts_sex_1$TP, metrics$counts_sex_1$FP,
+    metrics$counts_sex_1$TN, metrics$counts_sex_1$FN, "\n"
+  )
+  cat(
+    "Counts for Sex 2 (TP, FP, TN, FN):",
+    metrics$counts_sex_2$TP, metrics$counts_sex_2$FP,
+    metrics$counts_sex_2$TN, metrics$counts_sex_2$FN, "\n"
+  )
+}
+
+# Print results for both models.
+print_results(metrics_bst_1, "Tree-boosting XGB (bst_1)")
+print_results(metrics_bst_2, "Linear-boosting XGB (bst_2)")
+
+# Define gender-specific thresholds.
+threshold_female <- 0.6
+threshold_male <- 0.4
+cat("Threshold for men:", threshold_male, "\n")
+cat("Threshold for women:", threshold_female, "\n")
+
+# Apply gender-specific thresholds
+bst_1_pred_binary_adjusted <- ifelse(
+  test_data_xgb$Sex == 1,
+  as.numeric(bst_1_pred > threshold_female),
+  as.numeric(bst_1_pred > threshold_male)
+)
+
+metrics_bst_1_fairness_adjusted <- calculate_fairness_metrics(
+  test_data_xgb,
+  bst_1_pred_binary_adjusted
+)
+print_results(
+  metrics_bst_1_fairness_adjusted,
+  "Tree-boosting XGB (fairness adjusted)"
+)
+
+# Function to ensure monotonicity.
+ensure_monotonic <- function(x, y) {
+  order <- order(x, y)
+  x <- x[order]
+  y <- y[order]
+
+  monotonic_y <- cummax(y)
+
+  return(list(x = x, y = monotonic_y))
+}
+
+# Create ROC objects for each gender.
+roc_female <- roc(test_data_xgb$Class[test_data_xgb$Sex == 1],
+                  bst_1_pred[test_data_xgb$Sex == 1])
+roc_male <- roc(test_data_xgb$Class[test_data_xgb$Sex == 2],
+                bst_1_pred[test_data_xgb$Sex == 2])
+
+# Ensure monotonicity.
+female_mono <- ensure_monotonic(1 - roc_female$specificities, roc_female$sensitivities)
+male_mono <- ensure_monotonic(1 - roc_male$specificities, roc_male$sensitivities)
+
+# Create separate data frames for each gender.
+roc_data_female <- data.frame(
+  fpr = female_mono$x,
+  tpr = female_mono$y,
+  gender = "Female"
+)
+
+roc_data_male <- data.frame(
+  fpr = male_mono$x,
+  tpr = male_mono$y,
+  gender = "Male"
+)
+
+# Combine the data frames.
+roc_data <- rbind(roc_data_female, roc_data_male)
+
+# Create the plot.
+roc_plot <- ggplot(roc_data, aes(x = fpr, y = tpr, color = gender)) +
+  geom_line(linewidth = 1) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "gray") +
+  scale_color_manual(values = c("Female" = "red", "Male" = "blue")) +
+  labs(
+    x = "False Positive Rate",
+    y = "True Positive Rate",
+    title = "ROC Curves by Gender for bst_1 Model",
+    color = "Gender"
+  ) +
+  theme_minimal() +
+  coord_equal()
+
+# Print the plot.
+print(roc_plot)
+
+cat("AUC for Female:", auc(roc_female), "\n")
+cat("AUC for Male:", auc(roc_male), "\n")
+```
