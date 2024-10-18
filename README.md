@@ -12,7 +12,7 @@ Plan for the winter semester 2024/2025. MIM_UW classes are on Fridays.
 
 * 2024-10-04 -- Introduction, [Slides](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mim-uw/eXplainableMachineLearning-2025/refs/heads/main/Lectures/01_introduction.html), [Audio](https://youtu.be/EcWxG9qk410), Extra reading: [Lipton 2017](https://arxiv.org/abs/1606.03490)
 * 2024-10-11 -- Fairness, [Slides](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mim-uw/eXplainableMachineLearning-2025/refs/heads/main/Lectures/02_fairness.html), Extra reading: [Fairness and Machine Learning](https://fairmlbook.org/)    
-* 2024-10-18 -- LIME and friends, [Slides](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mim-uw/eXplainableMachineLearning-2025/refs/heads/main/Lectures/03_lime.html), , Extra reading: [Why Should I Trust You?](https://arxiv.org/abs/1602.04938), [LORE](https://arxiv.org/abs/1805.10820)
+* 2024-10-18 -- LIME and friends, [Slides](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mim-uw/eXplainableMachineLearning-2025/refs/heads/main/Lectures/03_lime.html), [Audio](https://youtu.be/u03k4ZebCpU), Extra reading: [Why Should I Trust You?](https://arxiv.org/abs/1602.04938), [LORE](https://arxiv.org/abs/1805.10820)
 * 2024-10-25 -- Ethics and AI 1/3
 * 2024-11-08 -- SHAP and friends
 * 2024-11-15 -- PDP and friends
