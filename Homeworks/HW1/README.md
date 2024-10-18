@@ -56,7 +56,7 @@ Alternative homework
 If you prefer proving theorems instead of calculations,
 then instead of the above assignments, 
 you can prove that except for trivial situations 
-(independence between a decision with a group), 
+(independence between ground truth and a group), 
 no two of the three fairness equalities 
 (demographic parity, equal opportunity, predictive rate parity) 
 can occur simultaneously.
